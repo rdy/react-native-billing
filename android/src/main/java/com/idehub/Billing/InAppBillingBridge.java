@@ -229,6 +229,22 @@ public class InAppBillingBridge extends ReactContextBaseJavaModule implements Ac
     }
 
     @ReactMethod
+    public void isValidTransactionDetails(final String productId, final Promise promise){
+        if (bp != null) {
+            TransactionDetails details = bp.getPurchaseTransactionDetails(productId);
+            if (details != null && productId.equals(details.purchaseInfo.purchaseData.productId))
+            {
+                  boolean isValid = bp.isValidTransactionDetails(details);
+                  promise.resolve(isValid);
+            } else {
+                promise.reject("EUNSPECIFIED", "Could not find transaction details for productId.");
+            }
+        } else {
+            promise.reject("EUNSPECIFIED", "Channel is not opened. Call open() on InAppBilling.");
+        }
+    }
+
+    @ReactMethod
     public void listOwnedProducts(final Promise promise){
         if (bp != null) {
             List<String> purchasedProductIds = bp.listOwnedProducts();
